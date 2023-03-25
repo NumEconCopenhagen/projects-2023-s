@@ -1,9 +1,8 @@
-# \[Group name\]
+# \[s\]
 
 **Group members:**
-- A
-- B
-- C
+- Emil Kjems
+
 
 This repository contains  
 1. Inaugural project. 
