@@ -136,7 +136,7 @@ class HouseholdSpecializationModelClass:
         guess = [12, 12, 12, 12]
 
         # run optimization
-        res = optimize.minimize(neg_utility, guess,method='Nelder-Mead', bounds=cons)
+        res = optimize.minimize(ofb, guess,method='Nelder-Mead', bounds=cons)
 
         # extract optimal values
         opt.LM = res.x[0]
