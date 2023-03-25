@@ -117,3 +117,36 @@ class HouseholdSpecializationModelClass:
                 print(f'{k} = {v:6.4f}')
 
         return opt
+    
+    
+    def solve_continuous(self, do_print=False):
+        """ solve model using continuous optimization """
+
+        par = self.par
+        sol = self.sol
+        opt = SimpleNamespace()
+
+        # define objective function
+        obj = lambda x: -self.calc_utility(x[0],x[1],x[2],x[3])
+
+        # define time constraints
+        cons = [(0,24),(0,24),(0,24),(0,24)]
+
+        # define initial guess
+        guess = [12, 12, 12, 12]
+
+        # run optimization
+        res = optimize.minimize(neg_utility, guess,method='Nelder-Mead', bounds=cons)
+
+        # extract optimal values
+        opt.LM = res.x[0]
+        opt.HM = res.x[1]
+        opt.LF = res.x[2]
+        opt.HF = res.x[3]
+
+        # print
+        if do_print:
+            for k,v in opt.__dict__.items():
+                print(f'{k} = {v:6.4f}')
+
+        return opt
