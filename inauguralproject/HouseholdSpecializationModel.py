@@ -153,9 +153,7 @@ class HouseholdSpecializationModelClass:
     
 
     def solve_wF_vec(self,discrete=False):
-        """ 
-        solve model for vector of female wages 
-        """
+        #solve for female wages
 
         par = self.par
         sol = self.sol
@@ -167,16 +165,27 @@ class HouseholdSpecializationModelClass:
                 results = self.solve_discrete()
             else: #for continous choice model
                 results = self.solve_continuous()
-            # i. find index of argument  
+            # i. Find index 
             j = np.where(par.wF_vec ==i)[0][0]
 
-            # ii. store results
+            # ii. Store the results
             sol.LM_vec[j] = results.LM
             sol.HM_vec[j] = results.HM
             sol.LF_vec[j] = results.LF
             sol.HF_vec[j] = results.HF
 
         return sol
+    
+    def run_regression(self):
+     # Run regression
+
+        par = self.par
+        sol = self.sol
+
+        x = np.log(par.wF_vec)
+        y = np.log(sol.HF_vec/sol.HM_vec)
+        A = np.vstack([np.ones(x.size),x]).T
+        sol.beta0,sol.beta1 = np.linalg.lstsq(A,y,rcond=None)[0]
     
 
     def estimate(self, alpha=None):
