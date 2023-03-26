@@ -230,3 +230,54 @@ class HouseholdSpecializationModelClass:
                                 bounds=bounds)
           
             return result
+        
+
+    def estimation_extended(self,sigma=0.5,epsilon=1,extended=True):
+        "Estimation when alpha is constant"
+        par = self.par
+        sol = self.sol
+        opt = SimpleNamespace()
+        par.alpha = 0.5
+
+        if extended==True: # if extended is true, the estimation is done with the extended model
+            def error(x):
+                sigma, epsilon = x.ravel()
+                par.sigma = sigma 
+                par.epsilon = epsilon
+
+                #The optimal household production
+                self.solve_wF_vec()  
+                sol = self.run_regression() 
+                error = (sol.beta0 - par.beta0_target)**2 +(sol.beta1 - par.beta1_target)**2 
+                return error
+            
+            results = optimize.minimize(error,[sigma, epsilon],method='Nelder-Mead', bounds=[(0,2),(0.5,2),(0.5,2)])
+            
+
+            opt.sigma = results.x[0]
+            opt.epsilon = results.x[1]
+        
+        
+        elif extended==False:
+            def error(x):
+                par.sigma = x 
+                
+                self.solve_wF_vec() #Optimal household production 
+                sol = self.run_regression() # beta0 and beta1
+                error = (sol.beta0 - par.beta0_target)**2 +(sol.beta1 - par.beta1_target)**2 
+                return error
+
+          
+            results = optimize.minimize(error,[sigma],method='Nelder-Mead', bounds=[(0,2)])
+
+
+            opt.sigma = results.x
+
+        else:
+            print('extended must be either True or False')
+
+        # d. saves error value  
+        error = (sol.beta0 - par.beta0_target)**2 +(sol.beta1 - par.beta1_target)**2 #calculates error
+        opt.error = error
+
+        return opt
