@@ -150,17 +150,17 @@ class HouseholdSpecializationModelClass:
                 print(f'{k} = {v:6.4f}')
 
         return opt
-
     
-def estimate(self, alpha=None):
+
+    def estimate(self, alpha=None):
     # Define the objective function to minimize
-    def objective(params):
-        sigma, alpha = params
-        self.par.sigma = sigma
-        self.par.alpha = alpha
-        self.solve_wF_vec()
-        self.run_regression()
-        return (self.par.beta0_target - self.sol.beta0)**2 + (self.par.beta1_target - self.sol.beta1)**2
+        def objective(params):
+            sigma, alpha = params
+            self.par.sigma = sigma
+            self.par.alpha = alpha
+            self.solve_wF_vec()
+            self.run_regression()
+            return (self.par.beta0_target - self.sol.beta0)**2 + (self.par.beta1_target - self.sol.beta1)**2
 
     # Set initial guess and bounds for the optimization variables
     guess = [0.5, 0.5]  # initial guess for sigma and alpha
@@ -173,7 +173,3 @@ def estimate(self, alpha=None):
         guess = [0.5]  # initial guess for sigma only
         bounds = [(1e-5, None)]
         result = optimize.minimize(objective, [alpha], method='Nelder-Mead', bounds=bounds)
-
-    # Return the estimated parameters
-
-    return result
