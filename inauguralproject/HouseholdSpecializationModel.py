@@ -209,7 +209,7 @@ class HouseholdSpecializationModelClass:
             guess = [0.5, 0.5]  # initial guess for sigma and alpha
             bounds = [(1e-5)*2]  # bounds for sigma and alpha
             result = optimize.minimize(objective, guess, method='Nelder-Mead', bounds=bounds)
-            print(f'sigma = {result.x[1]:.2f}, alpha = {result.x[0]:.2f} -> beta0 = {model.sol.beta0:.2f}, beta1 = {model.sol.beta1:.2f}')
+            print(f'sigma = {result.x[1]:.2f}, alpha = {result.x[0]:.2f} -> beta0 = {self.sol.beta0:.2f}, beta1 = {self.sol.beta1:.2f}')
         else:
             # i. objective function (to minimize)
             def objective(y):
