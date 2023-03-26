@@ -187,7 +187,7 @@ class HouseholdSpecializationModelClass:
             def objective(y):
                 par.sigma = y[1]
                 par.alpha = y[0]
-                self.solve_continuous_wF_vec()
+                self.solve_wF_vec()
                 self.run_regression()
                 return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
             
@@ -202,7 +202,7 @@ class HouseholdSpecializationModelClass:
             def objective(y):
                 par.alpha = alpha 
                 par.sigma = y[0] 
-                self.solve_continuous_wF_vec()
+                self.solve_wF_vec()
                 self.run_regression()
                 return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
 
