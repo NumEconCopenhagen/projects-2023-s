@@ -154,22 +154,39 @@ class HouseholdSpecializationModelClass:
 
     def estimate(self, alpha=None):
     # Define the objective function to minimize
-        def objective(params):
-            sigma, alpha = params
-            self.par.sigma = sigma
-            self.par.alpha = alpha
-            self.solve_wF_vec()
-            self.run_regression()
-            return (self.par.beta0_target - self.sol.beta0)**2 + (self.par.beta1_target - self.sol.beta1)**2
+        par = self.par
+        sol = self.sol
+        if alpha == None:
+            def objective(y):
+                par.sigma = y[1]
+                par.alpha = y[0]
+                self.solve_wF_vec()
+                self.run_regression()
+                return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
+            
+            obj = lambda y: objective(y)
+            guess = [0.5, 0.5]  # initial guess for sigma and alpha
+            bounds = [(1e-5)*2]  # bounds for sigma and alpha
+            result = optimize.minimize(objective, guess, method='Nelder-Mead', bounds=bounds)
+            print(f'alpha = {result.x[1]}')
+            print(f'sigma = {result.x[0]}')
+        else:
+            # i. objective function (to minimize)
+            def objective(y):
+                par.alpha = alpha 
+                par.sigma = y[0] 
+                self.solve_wF_vec()
+                self.run_regression()
+                return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
 
-    # Set initial guess and bounds for the optimization variables
-    guess = [0.5, 0.5]  # initial guess for sigma and alpha
-    bounds = [(1e-5, None), (0, 1)]  # bounds for sigma and alpha
+            obj = lambda y: objective(y)
+            guess = [0.5]
+            bounds =  [(1e-5)]
 
-    # Run the optimization with either fixed or variable alpha
-    if alpha is None:
-        result = optimize.minimize(objective, guess, method='Nelder-Mead', bounds=bounds)
-    else:
-        guess = [0.5]  # initial guess for sigma only
-        bounds = [(1e-5, None)]
-        result = optimize.minimize(objective, [alpha], method='Nelder-Mead', bounds=bounds)
+            # ii. optimizer
+            result = optimize.minimize(obj,
+                                guess,
+                                method='Nelder-Mead',
+                                bounds=bounds)
+          
+            return result
