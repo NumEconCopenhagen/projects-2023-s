@@ -166,7 +166,7 @@ class HouseholdSpecializationModelClass:
             if discrete: # for discrete choice model
                 results = self.solve_discrete()
             else: #for continous choice model
-                results = self.solve()
+                results = self.solve_continuous()
             # i. find index of argument  
             j = np.where(par.wF_vec ==i)[0][0]
 
@@ -187,7 +187,7 @@ class HouseholdSpecializationModelClass:
             def objective(y):
                 par.sigma = y[1]
                 par.alpha = y[0]
-                self.solve_wF_vec()
+                self.solve_continuous_wF_vec()
                 self.run_regression()
                 return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
             
@@ -202,7 +202,7 @@ class HouseholdSpecializationModelClass:
             def objective(y):
                 par.alpha = alpha 
                 par.sigma = y[0] 
-                self.solve_wF_vec()
+                self.solve_continuous_wF_vec()
                 self.run_regression()
                 return (par.beta0_target - sol.beta0)**2 + (par.beta1_target - sol.beta1)**2
 
