@@ -152,6 +152,33 @@ class HouseholdSpecializationModelClass:
         return opt
     
 
+    def solve_wF_vec(self,discrete=False):
+        """ 
+        solve model for vector of female wages 
+        """
+
+        par = self.par
+        sol = self.sol
+
+        #a. loop over relative wage and solve model
+        for i in par.wF_vec:
+            par.wF = i
+            if discrete: # for discrete choice model
+                results = self.solve_discrete()
+            else: #for continous choice model
+                results = self.solve()
+            # i. find index of argument  
+            j = np.where(par.wF_vec ==i)[0][0]
+
+            # ii. store results
+            sol.LM_vec[j] = results.LM
+            sol.HM_vec[j] = results.HM
+            sol.LF_vec[j] = results.LF
+            sol.HF_vec[j] = results.HF
+
+        return sol
+    
+
     def estimate(self, alpha=None):
     # Define the objective function to minimize
         par = self.par
