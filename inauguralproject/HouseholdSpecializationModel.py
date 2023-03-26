@@ -262,7 +262,7 @@ class HouseholdSpecializationModelClass:
             def error(x):
                 par.sigma = x 
                 
-                self.solve_wF_vec() #Optimal household production 
+                self.solve_wF_vec() # The optimal household production 
                 sol = self.run_regression() # beta0 and beta1
                 error = (sol.beta0 - par.beta0_target)**2 +(sol.beta1 - par.beta1_target)**2 
                 return error
