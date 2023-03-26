@@ -182,10 +182,15 @@ class HouseholdSpecializationModelClass:
         par = self.par
         sol = self.sol
 
+        # Generating the relevant variables
         x = np.log(par.wF_vec)
         y = np.log(sol.HF_vec/sol.HM_vec)
         A = np.vstack([np.ones(x.size),x]).T
         sol.beta0,sol.beta1 = np.linalg.lstsq(A,y,rcond=None)[0]
+
+        # Returns beta0 and beta1
+        sol.beta0,sol.beta1 = np.linalg.lstsq(A,y,rcond=None)[0]
+        return sol
     
 
     def estimate(self, alpha=None):
@@ -204,8 +209,7 @@ class HouseholdSpecializationModelClass:
             guess = [0.5, 0.5]  # initial guess for sigma and alpha
             bounds = [(1e-5)*2]  # bounds for sigma and alpha
             result = optimize.minimize(objective, guess, method='Nelder-Mead', bounds=bounds)
-            print(f'sigma = {result.x[1]:.2f}')
-            print(f'alpha = {result.x[0]:.2f}')
+            print(f'sigma = {result.x[1]:.2f}, alpha = {result.x[0]:.2f} -> beta0 = {model.sol.beta0:.2f}, beta1 = {model.sol.beta1:.2f}')
         else:
             # i. objective function (to minimize)
             def objective(y):
